@@ -4,7 +4,7 @@ import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 
 export default defineConfig({
-  site: 'https://attackthealgo.com',
+  site: 'https://attackthealgorithm.com',
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {
