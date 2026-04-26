@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { BIO } from '../data/bio';
+import { CERTS, EXPERIENCE, EDUCATION } from '../data/experience';
+---
+<Base title="About">
+  <Header current="about" />
+  <div class="va-page">
+    <div class="va-page-head">
+      <div class="va-section-num">/about</div>
+      <h1 class="va-page-title">About.</h1>
+    </div>
+    <div class="va-rule"></div>
+    <div class="va-about-page-grid">
+      <div class="va-about-page-bio">
+        <p class="va-about-page-lede">{BIO.intro}</p>
+        <h2 class="va-about-h2">// what i'm focused on</h2>
+        <ul class="va-about-list">{BIO.focus.map(f => <li>{f}</li>)}</ul>
+        <h2 class="va-about-h2">// experience</h2>
+        <div class="va-exp-list">
+          {EXPERIENCE.map(e => (
+            <div class="va-exp-row">
+              <div class="va-exp-years">{e.years}</div>
+              <div class="va-exp-mid"><div class="va-exp-co">{e.company}</div><div class="va-exp-role">{e.role}</div></div>
+              <div class="va-exp-loc">{e.loc}</div>
+            </div>
+          ))}
+        </div>
+        <h2 class="va-about-h2">// education</h2>
+        <div class="va-exp-list">
+          {EDUCATION.map(e => (
+            <div class="va-exp-row">
+              <div class="va-exp-years"></div>
+              <div class="va-exp-mid"><div class="va-exp-co">{e.school}</div><div class="va-exp-role">{e.degree}</div></div>
+              <div class="va-exp-loc">{e.loc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div class="va-about-page-side">
+        <div class="va-side-block">
+          <div class="va-side-h">currently</div>
+          <div class="va-side-row"><span>role</span><b>{BIO.role}</b></div>
+          <div class="va-side-row"><span>at</span><b>{BIO.company}</b></div>
+          <div class="va-side-row"><span>based</span><b>{BIO.location}</b></div>
+        </div>
+        <div class="va-side-block">
+          <div class="va-side-h">credentials</div>
+          {CERTS.map(c => <div class="va-side-focus-row">{c.code} · {c.year}</div>)}
+        </div>
+        <div class="va-side-block">
+          <div class="va-side-h">contact</div>
+          <a class="va-side-link" href={BIO.links.linkedin} target="_blank" rel="noopener noreferrer"><span>linkedin</span><span class="va-side-arrow">→</span></a>
+          <a class="va-side-link" href={BIO.links.email}><span>email</span><span class="va-side-arrow">→</span></a>
+          <a class="va-side-link" href="/rss.xml"><span>rss</span><span class="va-side-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <Footer />
+</Base>

@@ -1,0 +1,36 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { TAGS } from '../../data/tags';
+
+export async function getStaticPaths() {
+  return TAGS.map(t => ({ params: { tag: t.id }, props: { tagMeta: t } }));
+}
+const { tagMeta } = Astro.props;
+const posts = (await getCollection('posts', ({ data }) =>
+  !data.draft && data.tags.includes(tagMeta.id)
+)).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<Base title={tagMeta.label}>
+  <Header current="tags" />
+  <div class="va-page">
+    <div class="va-page-head">
+      <div class="va-section-num">/tag</div>
+      <h1 class="va-page-title">{tagMeta.label}</h1>
+      <p class="va-page-lede">{posts.length} post{posts.length === 1 ? '' : 's'} tagged <code>#{tagMeta.id}</code>.</p>
+    </div>
+    <div class="va-rule"></div>
+    <div class="va-tag-list" style="padding-top:24px">
+      {posts.map(p => (
+        <a class="va-tag-list-row" href={`/posts/${p.id.replace(/\.md$/, '')}`}>
+          <div class="va-tag-list-date">{p.data.date.toISOString().slice(0, 10)}</div>
+          <div class="va-tag-list-title">{p.data.title}</div>
+          <div class="va-tag-list-meta">{p.data.readTime} min</div>
+        </a>
+      ))}
+    </div>
+  </div>
+  <Footer />
+</Base>

@@ -1,0 +1,346 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { BIO } from '../data/bio';
+import { TAGS } from '../data/tags';
+import { CERTS, EXPERIENCE } from '../data/experience';
+
+const all = await getCollection('posts', ({ data }) => !data.draft);
+all.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const featured = all.find(p => p.data.pinned);
+const feed = featured ? all.filter(p => p.id !== featured.id) : all;
+const tagCounts = TAGS.map(t => ({ ...t, count: all.filter(p => p.data.tags.includes(t.id)).length }));
+
+const fsData = {
+  bio: { intro: BIO.intro, focus: BIO.focus, links: BIO.links },
+  experience: EXPERIENCE,
+  certs: CERTS,
+  posts: all.map(p => ({
+    slug: p.id.replace(/\.md$/, ''),
+    title: p.data.title,
+    date: p.data.date.toISOString().slice(0, 10),
+    excerpt: p.data.excerpt,
+    readTime: p.data.readTime,
+  })),
+};
+const fsJson = JSON.stringify(fsData).replace(/</g, '\\u003c');
+---
+<Base>
+  <Header current="home" />
+
+  <section class="va-hero">
+    <div class="va-hero-l">
+      <div class="va-eyebrow">// security notes & research</div>
+      <h1 class="va-h1">Field notes from<br/><span class="va-h1-accent">production security.</span></h1>
+      <p class="va-lede">{BIO.intro_short}</p>
+      <div class="va-hero-stats">
+        <div><b>8+</b><span>years</span></div>
+        <div><b>{CERTS.length}</b><span>certs</span></div>
+        <div><b>{all.length}</b><span>posts</span></div>
+      </div>
+    </div>
+    <div class="va-hero-r">
+      <div class="va-term">
+        <div class="va-term-bar"><span class="va-term-dot"></span><span class="va-term-dot"></span><span class="va-term-dot"></span><span class="va-term-title">~/notes</span></div>
+        <div class="va-term-body">
+          <div class="va-term-line"><span class="va-term-prompt">$</span><span class="va-term-cmd-wrap"><span class="va-term-cmd">whoami</span></span></div>
+          <div class="va-term-line faint"><span>moses nueman iii — staff security engineer @ meta</span></div>
+          <div class="va-term-line"><span class="va-term-prompt">$</span><span class="va-term-cmd-wrap"><span class="va-term-cmd">cat focus.txt</span></span></div>
+          {BIO.focus.map(f => <div class="va-term-line faint"><span>· {f}</span></div>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="va-rule"></div>
+
+  {featured && (
+    <a class="va-featured" href={`/posts/${featured.id.replace(/\.md$/, '')}`}>
+      <div class="va-feat-l">
+        <div class="va-feat-eyebrow">// featured · {featured.data.series ?? 'pinned'}</div>
+        <h2 class="va-feat-title">{featured.data.title}</h2>
+        <p class="va-feat-excerpt">{featured.data.excerpt}</p>
+        <div class="va-feat-foot">
+          <span>{featured.data.date.toISOString().slice(0, 10)}</span>
+          <span class="va-card-dot">·</span>
+          <span>{featured.data.readTime} min read</span>
+          <span class="va-feat-arrow">read article →</span>
+        </div>
+      </div>
+      <div class="va-feat-r">
+        <div class="va-feat-art">
+          <div class="va-feat-art-grid">
+            {Array.from({ length: 64 }).map(() => <span style={`opacity:${(Math.random() * 0.7 + 0.15).toFixed(2)}`}></span>)}
+          </div>
+          <div class="va-feat-art-label">FIG. 01 — {featured.data.tags[0]}</div>
+        </div>
+      </div>
+    </a>
+  )}
+
+  <div class="va-rule"></div>
+
+  <section class="va-feed">
+    <div class="va-feed-head">
+      <div><div class="va-section-num">/01</div><h2 class="va-h2">Recent writing</h2></div>
+    </div>
+    <div class="va-tagbar">
+      <a class="va-tag-btn on" href="/">all <span class="va-tag-count">{all.length}</span></a>
+      {tagCounts.filter(t => t.count > 0).map(t => (
+        <a class="va-tag-btn" href={`/tags/${t.id}`}>{t.label} <span class="va-tag-count">{t.count}</span></a>
+      ))}
+    </div>
+    <div class="va-grid">
+      {feed.map(p => (
+        <a class="va-card" href={`/posts/${p.id.replace(/\.md$/, '')}`}>
+          <div class="va-card-meta">
+            <span>{p.data.date.toISOString().slice(0, 10)}</span>
+            <span class="va-card-dot">·</span>
+            <span>{p.data.readTime} min read</span>
+          </div>
+          <h3 class="va-card-title">{p.data.title}</h3>
+          <p class="va-card-excerpt">{p.data.excerpt}</p>
+          <div class="va-card-tags">{p.data.tags.map(t => <span class="va-tag">#{t}</span>)}</div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <Footer />
+</Base>
+
+<script type="application/json" id="va-fs-data" set:html={fsJson}></script>
+
+<script>
+  const dataEl = document.getElementById('va-fs-data');
+  const FS = dataEl ? JSON.parse(dataEl.textContent) : null;
+  const body = document.querySelector('.va-term-body');
+
+  if (body && FS) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cursor = document.createElement('span');
+    cursor.className = 'va-cursor';
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    const FILES = {
+      'about.txt': () => FS.bio.intro,
+      'focus.txt': () => FS.bio.focus.map(f => '· ' + f).join('\n'),
+      'experience.txt': () => FS.experience.flatMap(e => [
+        `[${e.years}] ${e.company}`,
+        `  ${e.role}${e.loc ? ' · ' + e.loc : ''}`,
+      ]).join('\n'),
+      'certs.txt': () => FS.certs.map(c => `[${c.code.padEnd(7)}] ${c.org} · ${c.year} · ${c.name}`).join('\n'),
+      'contact.txt': () =>
+        `linkedin: ${FS.bio.links.linkedin}\nemail:    ${FS.bio.links.email}\nrss:      ${FS.bio.links.rss}`,
+    };
+    const ROOT_LIST = ['about.txt', 'focus.txt', 'experience.txt', 'certs.txt', 'contact.txt', 'posts/'];
+
+    const history = [];
+
+    function scrollDown() { body.scrollTop = body.scrollHeight; }
+
+    function printText(text, opts = {}) {
+      const div = document.createElement('div');
+      div.className = 'va-term-line faint';
+      if (opts.link) {
+        const a = document.createElement('a');
+        a.className = 'va-term-link';
+        a.href = opts.link;
+        a.textContent = text;
+        div.appendChild(a);
+      } else {
+        const span = document.createElement('span');
+        span.textContent = text;
+        div.appendChild(span);
+      }
+      body.appendChild(div);
+      scrollDown();
+      return div;
+    }
+
+    function executeCommand(input) {
+      const trimmed = input.trim();
+      if (!trimmed) return;
+      const parts = trimmed.split(/\s+/);
+      const cmd = parts[0];
+      const args = parts.slice(1);
+
+      switch (cmd) {
+        case 'help':
+          printText('available commands:');
+          printText('  ls [path]      list files');
+          printText('  cat <file>     print file contents');
+          printText('  whoami         identify the user');
+          printText('  clear          clear the screen');
+          printText('  help           this list');
+          break;
+        case 'ls': {
+          const path = args[0] || '';
+          if (!path || path === '.' || path === './') {
+            ROOT_LIST.forEach(f => printText(f));
+          } else if (path === 'posts/' || path === 'posts') {
+            FS.posts.forEach(p => printText(`${p.date}  ${p.slug}.md  (${p.readTime}min)`));
+          } else {
+            printText(`ls: cannot access '${path}': no such file or directory`);
+          }
+          break;
+        }
+        case 'cat': {
+          if (!args[0]) { printText('usage: cat <file>'); break; }
+          const target = args[0];
+          if (FILES[target]) {
+            FILES[target]().split('\n').forEach(l => printText(l));
+          } else if (target.startsWith('posts/')) {
+            const slug = target.replace(/^posts\//, '').replace(/\.md$/, '');
+            const post = FS.posts.find(p => p.slug === slug);
+            if (post) {
+              printText('# ' + post.title);
+              printText(`date: ${post.date} · ${post.readTime} min read`);
+              printText('');
+              printText(post.excerpt);
+              printText('');
+              printText('→ read full article', { link: '/posts/' + post.slug + '/' });
+            } else {
+              printText(`cat: ${target}: no such file`);
+            }
+          } else {
+            printText(`cat: ${target}: no such file`);
+          }
+          break;
+        }
+        case 'whoami':
+          printText('moses nueman iii — staff security engineer @ meta');
+          break;
+        case 'clear':
+          body.innerHTML = '';
+          break;
+        default:
+          printText(`${cmd}: command not found`);
+      }
+    }
+
+    function appendInputLine() {
+      const line = document.createElement('div');
+      line.className = 'va-term-line';
+      const dollar = document.createElement('span');
+      dollar.className = 'va-term-prompt';
+      dollar.textContent = '$';
+      const wrap = document.createElement('span');
+      wrap.className = 'va-term-cmd-wrap';
+      const text = document.createElement('span');
+      text.className = 'va-term-input-text';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'va-term-hidden-input';
+      input.autocomplete = 'off';
+      input.autocapitalize = 'off';
+      input.autocorrect = 'off';
+      input.spellcheck = false;
+      input.setAttribute('aria-label', 'terminal input');
+
+      wrap.appendChild(text);
+      wrap.appendChild(cursor);
+      line.appendChild(dollar);
+      line.appendChild(wrap);
+      line.appendChild(input);
+      body.appendChild(line);
+      scrollDown();
+
+      setTimeout(() => input.focus({ preventScroll: true }), 0);
+
+      let historyIndex = -1;
+      const setValue = (v) => {
+        input.value = v;
+        text.textContent = v;
+        setTimeout(() => input.setSelectionRange(v.length, v.length), 0);
+      };
+
+      input.addEventListener('input', () => {
+        text.textContent = input.value;
+        historyIndex = -1;
+        scrollDown();
+      });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const value = input.value;
+          if (cursor.parentNode === wrap) wrap.removeChild(cursor);
+          input.disabled = true;
+          if (value.trim()) history.push(value);
+          executeCommand(value);
+          appendInputLine();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (history.length === 0) return;
+          if (historyIndex < history.length - 1) historyIndex++;
+          setValue(history[history.length - 1 - historyIndex]);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (historyIndex > 0) {
+            historyIndex--;
+            setValue(history[history.length - 1 - historyIndex]);
+          } else if (historyIndex === 0) {
+            historyIndex = -1;
+            setValue('');
+          }
+        }
+      });
+    }
+
+    body.addEventListener('click', () => {
+      if (window.getSelection().toString()) return;
+      const inputs = body.querySelectorAll('.va-term-hidden-input:not([disabled])');
+      if (inputs.length) inputs[inputs.length - 1].focus({ preventScroll: true });
+    });
+
+    const initialLines = Array.from(body.querySelectorAll('.va-term-line'));
+    const items = initialLines.map(line => {
+      const cmdSpan = line.querySelector('.va-term-cmd');
+      const wrapSpan = line.querySelector('.va-term-cmd-wrap');
+      const isCommand = !!cmdSpan;
+      const textSpan = isCommand ? cmdSpan : line.querySelector('span:not(.va-term-prompt)');
+      return { line, isCommand, textSpan, wrapSpan, text: textSpan ? textSpan.textContent : '' };
+    });
+
+    if (reduced) {
+      const hint = document.createElement('div');
+      hint.className = 'va-term-hint';
+      hint.textContent = "// type 'help' for commands";
+      body.appendChild(hint);
+      appendInputLine();
+    } else {
+      items.forEach(it => {
+        if (it.isCommand) {
+          if (it.textSpan) it.textSpan.textContent = '';
+        } else {
+          it.line.style.opacity = '0';
+          it.line.style.transition = 'opacity 0.2s';
+        }
+      });
+      (async () => {
+        await sleep(450);
+        for (const it of items) {
+          if (it.isCommand) {
+            it.wrapSpan.appendChild(cursor);
+            for (const ch of it.text) {
+              it.textSpan.textContent += ch;
+              await sleep(50 + Math.random() * 40);
+            }
+            await sleep(320);
+          } else {
+            it.line.style.opacity = '';
+            await sleep(80);
+          }
+        }
+        const hint = document.createElement('div');
+        hint.className = 'va-term-hint';
+        hint.textContent = "// type 'help' for commands";
+        body.appendChild(hint);
+        scrollDown();
+        appendInputLine();
+      })();
+    }
+  }
+</script>

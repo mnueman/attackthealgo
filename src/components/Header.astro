@@ -1,0 +1,23 @@
+---
+import { BIO } from '../data/bio';
+const { current = 'home' } = Astro.props;
+---
+<header class="va-header">
+  <div class="va-brand-group">
+    <a class="va-brand" href="/">
+      <div class="va-mark">▮▮</div>
+      <div class="va-brand-title">Attacking the Algorithm</div>
+    </a>
+    <div class="va-author">
+      <div class="va-author-name">Moses Nueman III</div>
+      <div class="va-author-role">Staff Security Engineer</div>
+      <div class="va-author-co">Meta</div>
+    </div>
+  </div>
+  <nav class="va-nav">
+    <a class={current === 'home' ? 'on' : ''} href="/">writing</a>
+    <a class={current === 'tags' ? 'on' : ''} href="/tags">tags</a>
+    <a class={current === 'about' ? 'on' : ''} href="/about">about</a>
+    <button class="va-theme">☾ dark</button>
+  </nav>
+</header>

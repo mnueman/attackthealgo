@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+<Base title="Not Found">
+  <Header />
+  <div class="va-404-page">
+    <div class="va-404-term">
+      <div class="va-term-bar"><span class="va-term-dot"></span><span class="va-term-dot"></span><span class="va-term-dot"></span><span class="va-term-title">~/404</span></div>
+      <div class="va-term-body">
+        <div class="va-term-line"><span class="va-term-prompt">$</span><span>cat {Astro.url.pathname}</span></div>
+        <div class="va-term-line faint"><span>cat: no such file or directory</span></div>
+        <div class="va-term-line"><span class="va-term-prompt">$</span><span>_</span></div>
+      </div>
+    </div>
+    <div class="va-404-actions">
+      <a class="va-404-btn primary" href="/">← back to index</a>
+      <a class="va-404-btn" href="/tags">browse tags</a>
+    </div>
+    <div class="va-404-hint">
+      <p>If you got here from a link somewhere, <a href="https://www.linkedin.com/in/moses-nueman-iii/">let me know</a> so I can fix it.</p>
+    </div>
+  </div>
+  <Footer />
+</Base>

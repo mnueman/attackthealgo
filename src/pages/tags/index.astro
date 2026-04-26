@@ -1,0 +1,55 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { TAGS } from '../../data/tags';
+
+const all = await getCollection('posts', ({ data }) => !data.draft);
+const groups = TAGS.map(t => ({
+  meta: t,
+  posts: all.filter(p => p.data.tags.includes(t.id))
+            .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+})).filter(g => g.posts.length > 0)
+   .sort((a, b) => b.posts.length - a.posts.length);
+---
+<Base title="Tags">
+  <Header current="tags" />
+  <div class="va-page">
+    <div class="va-page-head">
+      <div class="va-section-num">/tags</div>
+      <h1 class="va-page-title">Index of <span class="va-h1-accent">topics</span>.</h1>
+      <p class="va-page-lede">All writing, organized by what it's about.</p>
+    </div>
+    <div class="va-rule"></div>
+    <div class="va-tag-cloud">
+      {groups.map(g => (
+        <a class="va-tag-cloud-item" href={`/tags/${g.meta.id}`}>
+          <span>{g.meta.label}</span>
+          <span class="va-tag-cloud-count">{g.posts.length}</span>
+        </a>
+      ))}
+    </div>
+    <div class="va-tag-sections">
+      {groups.map((g, i) => (
+        <section class="va-tag-section" id={g.meta.id}>
+          <div class="va-tag-section-head">
+            <div class="va-tag-section-num">/{String(i + 1).padStart(2, '0')}</div>
+            <h2 class="va-tag-section-title">{g.meta.label}</h2>
+            <span class="va-tag-section-count">{g.posts.length} posts</span>
+          </div>
+          <div class="va-tag-list">
+            {g.posts.map(p => (
+              <a class="va-tag-list-row" href={`/posts/${p.id.replace(/\.md$/, '')}`}>
+                <div class="va-tag-list-date">{p.data.date.toISOString().slice(0, 10)}</div>
+                <div class="va-tag-list-title">{p.data.title}</div>
+                <div class="va-tag-list-meta">{p.data.readTime} min</div>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+  <Footer />
+</Base>
