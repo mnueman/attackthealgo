@@ -10,12 +10,13 @@ export async function getStaticPaths() {
 }
 const { post } = Astro.props;
 const { Content, headings } = await post.render();
+const slug = post.id.replace(/\.md$/, '');
 const all = await getCollection('posts', ({ data }) => !data.draft);
 const related = all
   .filter(p => p.id !== post.id && p.data.tags.some(t => post.data.tags.includes(t)))
   .slice(0, 3);
 ---
-<Base title={post.data.title} description={post.data.excerpt}>
+<Base title={post.data.title} description={post.data.excerpt} ogImage={`/og/posts/${slug}.png`}>
   <Header />
   <div class="va-article-wrap">
     <a class="va-back" href="/">← back to index</a>
