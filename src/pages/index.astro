@@ -46,7 +46,7 @@ const fsJson = JSON.stringify(fsData).replace(/</g, '\\u003c');
         <div class="va-term-bar"><span class="va-term-dot"></span><span class="va-term-dot"></span><span class="va-term-dot"></span><span class="va-term-title">~/notes</span></div>
         <div class="va-term-body">
           <div class="va-term-line"><span class="va-term-prompt">$</span><span class="va-term-cmd-wrap"><span class="va-term-cmd">whoami</span></span></div>
-          <div class="va-term-line faint"><span>moses nueman iii — staff security engineer @ meta</span></div>
+          <div class="va-term-line faint"><span>Moses Nueman III — Senior Security Engineer @ Meta</span></div>
           <div class="va-term-line"><span class="va-term-prompt">$</span><span class="va-term-cmd-wrap"><span class="va-term-cmd">cat focus.txt</span></span></div>
           {BIO.focus.map(f => <div class="va-term-line faint"><span>· {f}</span></div>)}
         </div>
@@ -211,7 +211,7 @@ const fsJson = JSON.stringify(fsData).replace(/</g, '\\u003c');
           break;
         }
         case 'whoami':
-          printText('moses nueman iii — staff security engineer @ meta');
+          printText('Moses Nueman III — Senior Security Engineer @ Meta');
           break;
         case 'clear':
           body.innerHTML = '';

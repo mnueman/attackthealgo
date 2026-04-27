@@ -14,7 +14,7 @@ export const CERTS = [
 ];
 
 export const EXPERIENCE = [
-  { years: '2025 — present', company: 'Meta',          role: 'Staff Security Engineer',    loc: 'Ashburn, VA' },
+  { years: '2025 — present', company: 'Meta',          role: 'Senior Security Engineer',    loc: 'Ashburn, VA' },
   { years: '2022 — 2025',    company: 'Presidio',      role: 'Senior Security Analyst',     loc: 'Remote' },
   { years: '2023 — 2024',    company: 'CVS Health',    role: 'Senior Security Engineer',    loc: 'Remote' },
   { years: '2021 — 2023',    company: 'CGI',           role: 'Senior SOC Analyst',           loc: 'Remote' },

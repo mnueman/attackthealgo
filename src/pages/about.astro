@@ -18,6 +18,12 @@ import { CERTS, EXPERIENCE, EDUCATION } from '../data/experience';
         <p class="va-about-page-lede">{BIO.intro}</p>
         <h2 class="va-about-h2">// what i'm focused on</h2>
         <ul class="va-about-list">{BIO.focus.map(f => <li>{f}</li>)}</ul>
+        <h2 class="va-about-h2">// ai/ml security</h2>
+        <p>This is where most of my time goes now. I'm building AI-powered security operations platforms &mdash; RAG pipelines for real-time contextual enrichment, agentic workflows for autonomous investigation and evidence collection, and LLM orchestration for multi-step reasoning and dynamic response. The goal isn't "add AI." It's removing the long tail of manual triage and investigation toil so analysts can spend their time on the calls that actually need human judgment.</p>
+        <p>It also means thinking about the other side of the equation. LLMs and agents broke a bunch of assumptions security teams used to take for granted &mdash; what counts as untrusted input, where the trust boundary lives, what "least privilege" looks like when the thing exercising the privilege is a model making tool calls on its own. The interesting part isn't the high-level threat modeling. It's the specific, reproducible ways these systems fail in production and what you can actually do about them.</p>
+        <ul class="va-about-list">
+          <li><b>Red-teaming LLMs and agents.</b> Direct and indirect prompt injection, jailbreaks, tool-abuse, and capability escalation through agent action loops. The goal is reproducible findings and concrete mitigations &mdash; not abstract risk frameworks.</li>
+        </ul>
         <h2 class="va-about-h2">// experience</h2>
         <div class="va-exp-list">
           {EXPERIENCE.map(e => (
@@ -53,8 +59,6 @@ import { CERTS, EXPERIENCE, EDUCATION } from '../data/experience';
         <div class="va-side-block">
           <div class="va-side-h">contact</div>
           <a class="va-side-link" href={BIO.links.linkedin} target="_blank" rel="noopener noreferrer"><span>linkedin</span><span class="va-side-arrow">→</span></a>
-          <a class="va-side-link" href={BIO.links.email}><span>email</span><span class="va-side-arrow">→</span></a>
-          <a class="va-side-link" href="/rss.xml"><span>rss</span><span class="va-side-arrow">→</span></a>
         </div>
       </div>
     </div>

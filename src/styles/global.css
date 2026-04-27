@@ -1,5 +1,15 @@
 /* Variation A — Terminal Editorial */
 
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: #0b0b0e;
+  overflow-x: clip;
+}
+html:has(.va-root.va-light),
+html:has(.va-root.va-light) body { background: #f6f4ee; }
+
 .va-root {
   --bg: #0b0b0e;
   --bg-2: #131318;
@@ -15,7 +25,8 @@
   background: var(--bg);
   color: var(--fg);
   min-height: 100%;
-  padding: 0 56px 0 56px;
+  --gutter: 56px;
+  padding: 0 var(--gutter);
   line-height: 1.55;
 }
 .va-root.va-light {
@@ -35,7 +46,8 @@
 /* Header */
 .va-header {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 28px 0 24px;
+  padding: 28px var(--gutter) 24px;
+  margin: 0 calc(-1 * var(--gutter));
   border-bottom: 1px solid var(--line);
   position: sticky; top: 0; background: var(--bg); z-index: 5;
 }
@@ -98,7 +110,13 @@
 .va-term-cmd-wrap { display: inline-block; }
 .va-term-body { cursor: text; }
 .va-term-input-text { word-break: break-word; }
-.va-term-hidden-input { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.va-term-hidden-input {
+  position: absolute; left: 0; top: 0;
+  width: 1px; height: 1px;
+  opacity: 0; border: 0; padding: 0; margin: 0;
+  background: transparent; color: transparent; caret-color: transparent;
+  font: inherit; pointer-events: none;
+}
 .va-term-link { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 .va-term-hint { color: var(--fg-3); font-size: 11px; margin: 10px 0 6px; opacity: 0.7; }
 .va-term-bar {
@@ -110,7 +128,7 @@
 .va-term-dot { width: 11px; height: 11px; border-radius: 50%; background: var(--fg-3); opacity: 0.5; }
 .va-term-title { margin-left: 16px; font-size: 11px; color: var(--fg-3); }
 .va-term-body { padding: 22px 18px; height: 320px; overflow-y: auto; }
-.va-term-line { display: flex; gap: 10px; margin-bottom: 6px; word-break: break-word; }
+.va-term-line { display: flex; gap: 10px; margin-bottom: 6px; word-break: break-word; position: relative; }
 .va-term-line.faint { color: var(--fg-2); padding-left: 0; }
 .va-term-prompt { color: var(--accent); width: 12px; flex-shrink: 0; }
 .va-cursor { display: inline-block; width: 8px; height: 14px; background: var(--accent); margin-left: 1px; vertical-align: text-bottom; animation: va-blink 1s steps(2, end) infinite; }
@@ -250,6 +268,38 @@
 .va-article-foot-txt { font-family: var(--mono); font-size: 13px; color: var(--fg-2); margin-top: 24px; }
 .va-article-foot a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 
+/* Markdown-rendered code blocks (Shiki output) */
+.va-article-body pre {
+  margin: 28px 0;
+  padding: 18px 20px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  font-size: 13.5px;
+  line-height: 1.6;
+  overflow-x: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.va-article-body pre code {
+  font-family: var(--mono);
+  font-size: inherit;
+  line-height: inherit;
+  background: transparent;
+  padding: 0;
+  border: 0;
+  color: inherit;
+}
+.va-article-body :not(pre) > code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 1px 6px;
+  color: var(--accent);
+  word-break: break-word;
+}
+
 /* Featured (editorial treatment in dark mono-serif) */
 .va-featured {
   display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 64px;
@@ -285,6 +335,7 @@
   display: flex; flex-direction: column; justify-content: space-between;
   max-width: 380px; margin-left: auto;
   box-sizing: border-box;
+  overflow: hidden;
 }
 .va-feat-art-grid {
   display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px;
@@ -561,9 +612,8 @@
 /* ──────────────────────────────────────────────────────────── */
 /* MOBILE — applied via .va-mobile (forced) OR @media           */
 /* ──────────────────────────────────────────────────────────── */
-.va-root.va-mobile,
 @media (max-width: 720px) {
-  .va-root { padding: 0 20px; }
+  .va-root { --gutter: 20px; }
 
   /* Header — collapse nav */
   .va-header { padding: 16px 0 14px; }
@@ -623,6 +673,7 @@
   .va-toc { display: none; }
   .va-article-title { font-size: 32px; }
   .va-article-body p { font-size: 17px; }
+  .va-article-body pre { font-size: 12.5px; padding: 14px 16px; }
 
   /* Certs / experience */
   .va-cert-grid { grid-template-columns: repeat(2, 1fr); }
@@ -638,7 +689,7 @@
 }
 
 /* Force mobile via class (independent of viewport) */
-.va-root.va-mobile { padding: 0 20px !important; }
+.va-root.va-mobile { --gutter: 20px !important; }
 .va-root.va-mobile .va-hero { grid-template-columns: 1fr !important; gap: 36px !important; padding: 40px 0 56px !important; }
 .va-root.va-mobile .va-h1 { font-size: 38px !important; }
 .va-root.va-mobile .va-lede { font-size: 17px !important; }

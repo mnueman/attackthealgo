@@ -1,15 +1,15 @@
 export const BIO = {
   name: 'Moses Nueman III',
-  role: 'Staff Security Engineer',
+  role: 'Senior Security Engineer',
   company: 'Meta',
   location: 'Washington, DC',
-  intro_short: "Staff-level security engineer with 8+ years across detection engineering, IR, threat hunting, and cloud. These days mostly working on AI-native security tooling.",
-  intro: "As a highly dedicated and detail-focused cyber security expert, I bring over 8 years of specialized experience in cross-functional incident response. I have a strong track record of configuring and integrating security systems that minimize risk and effectively address severe incidents. My proficiency in detecting, monitoring, and reporting potential threats, attacks, vulnerabilities, and unusual activities has been demonstrated through my proven record of success. I excel in fast-paced environments and am skilled in collaborating with individuals at all levels to achieve common goals.",
+  intro_short: "Senior security engineer with 8+ years across detection engineering, IR, threat hunting, and cloud. These days mostly working on AI-native security tooling.",
+  intro: "Senior security engineer at Meta, working on detection & response. I've spent the last 8+ years across detection engineering, incident response, threat hunting, and cloud — building detection programs from the ground up across federal, healthcare, and now hyperscale infrastructure. Most of the work now is AI-native security tooling: RAG pipelines, agentic workflows, and LLM orchestration that take the toil out of triage and investigation. Based in DC.",
   focus: [
     'AI/ML security & detection',
     'Detection engineering at scale',
     'Cloud security (AWS, GCP)',
-    'Mentoring junior engineers',
+    'Threat hunting & incident response',
   ],
   links: {
     linkedin: 'https://www.linkedin.com/in/moses-nueman-iii/',
